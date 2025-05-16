@@ -24,12 +24,15 @@ public class User {
 		password = a;
 	}
 	
-	public void passwordValidator() throws InvalidPasswordException {
+	public void passwordValidator() throws InvalidPasswordException, PasswordLenghtException {
 		char[] passwordArray = password.toCharArray();
 		for(char c : passwordArray) {
 			if(c == ' ') {
 				throw new InvalidPasswordException("The password cant have spaces inbetween");
 			}
+		}
+		if(passwordArray.length < 8) {
+			throw new PasswordLenghtException("\"*the password must be more than 8 letters");
 		}
 	}
 }
