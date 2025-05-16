@@ -16,12 +16,7 @@ public class ProjectMain {
 		    new UserRecognition(dummy);
 		});
 		*/
-        JFrame dummyFrame = new JFrame(); // optional: used as a parent
-        dummyFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // just in case
-        dummyFrame.setSize(0, 0); // invisible
-        dummyFrame.setVisible(true); // needed to center dialog on it (optional)
-
-        new UserRecognition2(null); // run your dialog
+        new UserRecognition2();
 
 	}
 
