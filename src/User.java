@@ -1,19 +1,21 @@
+import java.util.ArrayList;
 
 public class User {
-	private String userName;
+	private String username;
 	private String password;
+	public static ArrayList<User> users;
 	
 	public User(String userName,String password){
-		this.userName = userName;
+		this.username = userName;
 		this.password = password;
 	}
 	
 	public String getUserName() {
-		return userName;
+		return username;
 	}
 	
-	public void setUserName(String username) {			
-		userName = username;
+	public void setUserName(String userName) {			
+		username = userName;
 	}
 	
 	public String getPassword() {
@@ -32,7 +34,14 @@ public class User {
 			}
 		}
 		if(passwordArray.length < 8) {
-			throw new PasswordLenghtException("\"*the password must be more than 8 letters");
+			throw new PasswordLenghtException("The password must be more than 8 letters");
+		}
+	}
+	
+	public void usernameValidator() throws UsernameLenghtException{
+		char[] usernameArray = username.toCharArray();
+		if(usernameArray.length < 1) {
+			throw new UsernameLenghtException("Please enter a username");
 		}
 	}
 }
