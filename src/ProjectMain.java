@@ -1,7 +1,3 @@
-import java.util.ArrayList;
-
-import javax.swing.JDialog;
-
 public class ProjectMain {
 
 	public static void main(String[] args) {
@@ -9,16 +5,14 @@ public class ProjectMain {
 		for(User user : User.users) {
 			System.out.println(user.getUserName());
 		}
-		
-        UserInterface userInterface = new UserInterface();
-        userInterface .setTitle("User Interface"); //name of the window
-        userInterface .setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE); //sağ üst çarpı
-        userInterface .setSize(450, 250); //boyut
-        userInterface .setModal(true); //cant close until you finish with it
-        userInterface .setResizable(false); //kenardan tutup büyütemezsin
-        userInterface .setLocationRelativeTo(null); //merkezde ortaya çıkması için
-        userInterface .setVisible(true);
         
+        MainMenuScreen mainMenuScreen = new MainMenuScreen();
+        mainMenuScreen.setTitle("PANG");
+        mainMenuScreen.setDefaultCloseOperation(3);
+        mainMenuScreen.setSize(450, 250);
+        mainMenuScreen.setResizable(false);
+        mainMenuScreen.setLocationRelativeTo(null);
+        mainMenuScreen.setVisible(true);
 	}
 
 }

@@ -1,4 +1,4 @@
-import java.awt.Color; 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -6,13 +6,13 @@ import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class UserInterface extends JDialog {
+public class UserInterface extends JFrame {
 
 	private static JPanel mainPanel;
 	private JPanel usernamePanel;
@@ -58,7 +58,7 @@ public class UserInterface extends JDialog {
 		errorLabel1.setForeground(Color.RED);
 		errorLabel2 = new JLabel("*the password must be more than 8 letters");
 		errorLabel2.setForeground(Color.RED);
-		errorLabel3 = new JLabel("*please enter a username");
+		errorLabel3 = new JLabel("*invalid username");
 		errorLabel3.setForeground(Color.RED);
 		errorPanel.add(errorLabel1);
 		errorPanel.add(errorLabel2);
@@ -102,7 +102,12 @@ public class UserInterface extends JDialog {
 		OKButton.addActionListener(handler);
 		CancelButton.addActionListener(handler);
 		
-		
+		 setTitle("User Interface"); //name of the window
+	     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //sağ üst çarpı
+	     setSize(450, 250); //boyut
+	     setResizable(false); //kenardan tutup büyütemezsin
+	     setLocationRelativeTo(null); //merkezde ortaya çıkması için
+	     setVisible(true);
 	}
 	
 	
@@ -125,11 +130,12 @@ public class UserInterface extends JDialog {
 	}
 	
 	public void username_passwordChecker() {
-		String username = usernameTxtField.getText(); //gets the username
+		String username = usernameTxtField.getText().trim(); //gets the username
 		String password = new String(passwordTxtField.getPassword()); //getPassword returns char[], made it a String like this
 		User user = new User(username, password);
 		errorLabel1.setVisible(false);
 		errorLabel2.setVisible(false);
+		errorLabel3.setVisible(false);
 		errorLabel3.setVisible(false);
 		try {
 			user.usernameValidator();
@@ -140,6 +146,7 @@ public class UserInterface extends JDialog {
 		catch(UsernameLenghtException e) {
 			errorLabel3.setVisible(true);
 		}
+		
 		catch(InvalidPasswordException e) {
 			errorLabel1.setVisible(true);
 		}
@@ -150,7 +157,10 @@ public class UserInterface extends JDialog {
 			errorLabel1.setText("*wrong password for the given username");
 			errorLabel1.setVisible(true);
 		}
-		if(errorLabel1.isVisible() || errorLabel2.isVisible() || errorLabel3.isVisible()) {
+		if(errorLabel3.isVisible()) {
+			errorPanel.setVisible(true);
+		}
+		else if(errorLabel1.isVisible() || errorLabel2.isVisible()) {
 			errorPanel.setVisible(true);
 		}
 	}

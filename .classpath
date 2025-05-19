@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/koyun/Downloads/ToPutVideosToJavaCode/slf4j-api-1.7.36.jar"/>
+	<classpathentry kind="lib" path="C:/Users/koyun/Downloads/ToPutVideosToJavaCode/slf4j-simple-1.7.36.jar"/>
+	<classpathentry kind="lib" path="C:/Users/koyun/Downloads/ToPutVideosToJavaCode/vlcj-natives-4.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/koyun/Downloads/ToPutVideosToJavaCode/vlcj-4.8.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/koyun/Downloads/ToPutVideosToJavaCode/jna-5.13.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/koyun/Downloads/ToPutVideosToJavaCode/jna-platform-5.13.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
