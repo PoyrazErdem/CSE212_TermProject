@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -30,8 +32,10 @@ public class UserInterface extends JFrame {
 	private JButton OKButton;
 	private JButton CancelButton;
 	
-	public UserInterface() {
-		
+	private JFrame parent;
+	
+	public UserInterface(JFrame parent) {
+		this.parent = parent;
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); //Box layout kullan
 		JLabel welcomeTxt = new JLabel("Welcome to Pang, Please enter your username and password");	//mesaj	
@@ -101,19 +105,33 @@ public class UserInterface extends JFrame {
 		passwordTxtField.addActionListener(handler);
 		OKButton.addActionListener(handler);
 		CancelButton.addActionListener(handler);
+		addWindowListener(new Handler());
 		
-		 setTitle("User Interface"); //name of the window
-	     setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); //sağ üst çarpı
-	     setSize(450, 250); //boyut
-	     setResizable(false); //kenardan tutup büyütemezsin
-	     setLocationRelativeTo(null); //merkezde ortaya çıkması için
-	     setVisible(true);
+		
+		setTitle("User Interface"); //name of the window
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(450, 250); //boyut
+        setResizable(false); //kenardan tutup büyütemezsin
+        setLocationRelativeTo(null); //merkezde ortaya çıkması için
+        setVisible(true);
+	}
+
+	private class Handler extends WindowAdapter{
+		public void windowClosing(WindowEvent e) {
+	        parent.setVisible(true);
+	    }
 	}
 	
 	
 	private class ActionHandler implements ActionListener{
+		
+		boolean checkpass = true;
+		
 		public void actionPerformed(ActionEvent	event) {
 			if(event.getSource() == usernameTxtField) {
+				checkpass = false;
+				username_passwordChecker();
+				checkpass = true;
 				passwordTxtField.requestFocusInWindow();  // when "enter" is pressed automatically skip to the password input field 
 			}
 			else if(event.getSource() == passwordTxtField) {
@@ -124,45 +142,54 @@ public class UserInterface extends JFrame {
 				username_passwordChecker();
 			}
 			else if(event.getSource() == CancelButton) {
+				parent.setVisible(true);
 				dispose();
 			}
 		}
-	}
-	
-	public void username_passwordChecker() {
-		String username = usernameTxtField.getText().trim(); //gets the username
-		String password = new String(passwordTxtField.getPassword()); //getPassword returns char[], made it a String like this
-		User user = new User(username, password);
-		errorLabel1.setVisible(false);
-		errorLabel2.setVisible(false);
-		errorLabel3.setVisible(false);
-		errorLabel3.setVisible(false);
-		try {
-			user.usernameValidator();
-			user.passwordValidator();
-			UserManegment.Login(username, password);
-			dispose();
-		}
-		catch(UsernameLenghtException e) {
-			errorLabel3.setVisible(true);
-		}
 		
-		catch(InvalidPasswordException e) {
-			errorLabel1.setVisible(true);
-		}
-		catch(PasswordLenghtException e) {
-			errorLabel2.setVisible(true);
-		}
-		catch(WrongPasswordException e) {
-			errorLabel1.setText("*wrong password for the given username");
-			errorLabel1.setVisible(true);
-		}
-		if(errorLabel3.isVisible()) {
-			errorPanel.setVisible(true);
-		}
-		else if(errorLabel1.isVisible() || errorLabel2.isVisible()) {
-			errorPanel.setVisible(true);
-		}
+		public void username_passwordChecker() {
+			String username = usernameTxtField.getText().trim(); //gets the username
+			String password = new String(passwordTxtField.getPassword()); //getPassword returns char[], made it a String like this
+			User user = new User(username, password);
+			errorLabel1.setVisible(false);
+			errorLabel2.setVisible(false);
+			errorLabel3.setVisible(false);
+			errorLabel3.setVisible(false);
+			try {
+				user.usernameValidator();
+				if(checkpass == true) {
+					user.passwordValidator();
+					UserManegment.Login(username, password);
+					dispose();
+				}else {
+					// do nothing
+				}
+			}
+			catch(UsernameLenghtException e) {
+				errorLabel3.setVisible(true);
+			}
+			
+			catch(InvalidPasswordException e) {
+				errorLabel1.setVisible(true);
+			}
+			catch(PasswordLenghtException e) {
+				errorLabel2.setVisible(true);
+			}
+			catch(WrongPasswordException e) {
+				errorLabel1.setText("*wrong password for the given username");
+				errorLabel1.setVisible(true);
+			}
+			if(errorLabel3.isVisible()) {
+				errorPanel.setVisible(true);
+			}
+			else if(errorLabel1.isVisible() || errorLabel2.isVisible()) {
+				errorPanel.setVisible(true);
+			}
+			else if(checkpass) {
+				dispose();
+				new GameScreen();
+			}
+		}	
 	}
 }
 

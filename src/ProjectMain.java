@@ -7,12 +7,15 @@ public class ProjectMain {
 		}
         
         MainMenuScreen mainMenuScreen = new MainMenuScreen();
-        mainMenuScreen.setTitle("PANG");
+        mainMenuScreen.setTitle("WElCOME");
         mainMenuScreen.setDefaultCloseOperation(3);
         mainMenuScreen.setSize(450, 250);
         mainMenuScreen.setResizable(false);
         mainMenuScreen.setLocationRelativeTo(null);
         mainMenuScreen.setVisible(true);
+        
+		
+		//new GameScreen();
 	}
 
 }

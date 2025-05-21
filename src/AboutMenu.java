@@ -8,11 +8,18 @@ import java.util.ArrayList;
 
 public class AboutMenu extends JFrame {
 
+    private JFrame parent;
     private EmbeddedMediaPlayerComponent mediaPlayerComponent;
     private ArrayList<JLabel> textLabels = new ArrayList<>();
     private JPanel videoPanel;
 
-    public AboutMenu() {
+    public AboutMenu(JFrame parent) {
+        this.parent = parent;
+
+        if (parent != null) {
+            parent.setVisible(false);
+        }
+
         setTitle("About");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(800, 400);
@@ -21,12 +28,11 @@ public class AboutMenu extends JFrame {
         setResizable(true);
         setLayout(new BorderLayout(20, 20));
 
-        // LEFT: Developer Info
         JPanel textPanel = new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
         textPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        JLabel devLabel = new JLabel("The developer: Poyraz Erdem Koyuncu");
+        JLabel devLabel = new JLabel("The author: Poyraz Erdem Koyuncu");
         JLabel idLabel = new JLabel("Student number: 20230702066");
         JLabel emailLabel = new JLabel("E-Mail: poyrazerdem.koyuncu@std.yeditepe.edu.tr");
 
@@ -42,13 +48,13 @@ public class AboutMenu extends JFrame {
 
         add(textPanel, BorderLayout.WEST);
 
-        // RIGHT: VLCJ Video Player
+        // VLCJ Video panel
         mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
         videoPanel = new JPanel(new BorderLayout());
         videoPanel.add(mediaPlayerComponent, BorderLayout.CENTER);
         add(videoPanel, BorderLayout.CENTER);
 
-        // Resize font dynamically
+        // Resize fonts dynamically with window
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -60,15 +66,26 @@ public class AboutMenu extends JFrame {
             }
         });
 
-        // Play the video and loop it
         String videoPath = new File("src/poy_ai_dans.mp4").getAbsolutePath();
         SwingUtilities.invokeLater(() -> {
             mediaPlayerComponent.mediaPlayer().media().play(videoPath);
             mediaPlayerComponent.mediaPlayer().controls().setRepeat(true);
         });
 
-        setVisible(true); // 🟢 Important to show the window
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                mediaPlayerComponent.mediaPlayer().controls().stop();
+                mediaPlayerComponent.release();
+                if (parent != null) {
+                    parent.setVisible(true);
+                }
+            }
+        });
+
+        setVisible(true);
     }
 }
+
 
 

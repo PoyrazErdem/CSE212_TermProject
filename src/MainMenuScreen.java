@@ -12,12 +12,12 @@ import javax.swing.JPanel;
 public class MainMenuScreen extends JFrame{
 	private JLabel welcomeTextLabel = new JLabel("WELCOME TO PANG");
 	private JButton playButton = new JButton("PLAY");
-	private JButton optionsButton = new JButton("OPTIONS");
-	private JButton helpButton = new JButton("HELP");
 	private JPanel mainPanel = new JPanel();
 	private JPanel buttonPanel = new JPanel();
+	private JFrame that;
 	
 	public MainMenuScreen(){
+		that = this;
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
 		
 		JPanel welcomeCenterAligner = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -28,42 +28,25 @@ public class MainMenuScreen extends JFrame{
 		JPanel playCenterAligner = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		playCenterAligner.add(playButton);
 		
-		JPanel optionsCenterAligner = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		optionsCenterAligner.add(optionsButton);
-		
-		JPanel helpCenterAligner = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-		helpCenterAligner.add(helpButton);
-		
 		buttonPanel.add(playCenterAligner);
-		buttonPanel.add(Box.createVerticalStrut(0));
-		buttonPanel.add(optionsCenterAligner);
-		buttonPanel.add(Box.createVerticalStrut(0));
-		buttonPanel.add(helpCenterAligner);
-		buttonPanel.add(Box.createVerticalStrut(35));
+		buttonPanel.add(Box.createVerticalStrut(20));
 		
 		mainPanel.add(welcomeCenterAligner);
-		mainPanel.add(Box.createVerticalStrut(20));
+		
 		mainPanel.add(buttonPanel);
 		
 		add(mainPanel);
 		
 		ActionHandler handler = new ActionHandler();
 		playButton.addActionListener(handler);
-		optionsButton.addActionListener(handler);
-		helpButton.addActionListener(handler);
 	}
 	
 	private class ActionHandler implements ActionListener{
 		public void actionPerformed(ActionEvent	event) {
 			String skibidi = event.getActionCommand();
 			if(skibidi.equals("PLAY")){
-				new UserInterface();
-			}
-			else if(skibidi.equals("OPTIONS")) {
-				
-			}
-			else if(skibidi.equals("HELP")) {
-				new AboutMenu();
+				that.setVisible(false);
+				new UserInterface(that);
 			}
 		}
 	}
