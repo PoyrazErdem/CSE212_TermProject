@@ -1,10 +1,20 @@
-import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.ArrayList;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 public class AboutMenu extends JFrame {
 

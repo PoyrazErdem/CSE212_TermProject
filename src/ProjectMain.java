@@ -5,17 +5,17 @@ public class ProjectMain {
 		for(User user : User.users) {
 			System.out.println(user.getUserName());
 		}
-        
+        /*
         MainMenuScreen mainMenuScreen = new MainMenuScreen();
-        mainMenuScreen.setTitle("WElCOME");
+        mainMenuScreen.setTitle("WELCOME");
         mainMenuScreen.setDefaultCloseOperation(3);
         mainMenuScreen.setSize(450, 250);
         mainMenuScreen.setResizable(false);
         mainMenuScreen.setLocationRelativeTo(null);
         mainMenuScreen.setVisible(true);
-        
+        */
 		
-		//new GameScreen();
+		new GameScreen();
 	}
 
 }

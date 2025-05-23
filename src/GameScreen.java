@@ -22,7 +22,7 @@ public class GameScreen extends JFrame{
 		
 		quitItem = new JMenuItem("Quit");
 		historyItem = new JMenuItem("History");
-		highScoreItem = new JMenuItem("Highest Scores");
+		highScoreItem = new JMenuItem("High Score List");
 		noviceItem = new JMenuItem("Novice");
 		intermediateItem = new JMenuItem("Intermediate");
 		advencedItem = new JMenuItem("Advenced");
@@ -56,8 +56,11 @@ public class GameScreen extends JFrame{
         advencedItem.addActionListener(handler);
         aboutItem.addActionListener(handler);
         
+        GamePanel gamePanel = new GamePanel();
+        add(gamePanel);
+        
         setTitle("PANG");
-        setSize(1300,900);
+        setSize(1000,600);
         setLocationRelativeTo(null);	
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setVisible(true);
@@ -72,24 +75,25 @@ public class GameScreen extends JFrame{
 	    	switch(type) {
 	    		case "Quit":
 	    			System.exit(0);
+	    			break;
 	    			
 	    		case "History":
+	    			break;
 	    			
-	    			
-	    		case "Highest Scores":
+	    		case "High Score List":
 	    			HighScoreList test = new HighScoreList();
 	    			test.highScore();
 	    			test.highScore2();
 	    			break;
 	    			
 	    		case "Novice":
-	    			
+	    			break;
 	    			
 	    		case "Intermediate":
-	    			
+	    			break;
 	    			
 	    		case "Advenced":
-	    			
+	    			break;
 	    		
 	    		case "About":
 	    			setVisible(false);
