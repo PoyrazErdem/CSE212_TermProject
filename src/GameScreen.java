@@ -60,7 +60,7 @@ public class GameScreen extends JFrame{
         add(gamePanel);
         
         setTitle("PANG");
-        setSize(1300,900);
+        setSize(GamePanel.backgroundWidth *3,840);
         setLocationRelativeTo(null);	
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setVisible(true);
