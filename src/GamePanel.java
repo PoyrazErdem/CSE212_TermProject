@@ -31,11 +31,15 @@ public class GamePanel extends JPanel {
     private boolean shooting = false;
     
     private BufferedImage hookSheet;
-    private BufferedImage[] hooks = new BufferedImage[58];
+    private BufferedImage[] hooks = new BufferedImage[46];
     private int initialHookX = 8;
     private int initialHookY = 1383;
     private int hookWidth = 9;
-    private int hookLenght = 1560 - 1383;
+    private int hookLenght = 1417 - 1383;
+    private int hookY = 500 - 29;
+    private int currentHookFrame = 0;
+    private boolean hookInMotion = false;
+    private Timer hookTimer;
     
     private Timer timer;
     private Timer movertimer;
@@ -56,6 +60,11 @@ public class GamePanel extends JPanel {
         requestFocusInWindow();
         addKeyListener(new keyHandler());
         setBackground(Color.BLACK);
+        setLayout(null); // Use absolute layout
+
+        Time timerPanel = new Time();
+        timerPanel.setBounds(1000, 640, 150, 40); // position and size on the GamePanel
+        add(timerPanel);
 
         
         try {
@@ -88,18 +97,13 @@ public class GamePanel extends JPanel {
             
             
             for(int i = 0; i < 23; i++) {
-            	hooks[i] = hookSheet.getSubimage(initialHookX + (8 * i), initialHookY + (2 * i), hookWidth, hookLenght + (2 * i));
+            	hooks[i] = hookSheet.getSubimage(initialHookX + (16 * i), initialHookY + (4 * i), hookWidth, hookLenght + (4 * i));
             }
             for(int a = 23; a < 46; a++) {
             	int i = 0;
-            	hooks[a] = hookSheet.getSubimage(initialHookX + (8 * i), initialHookY + 57 + (2 * i), hookWidth, hookLenght + 52 + (2 * i));
+            	hooks[a] = hookSheet.getSubimage(initialHookX + (16 * i), initialHookY + 114 + 68 + (4 * i), hookWidth, hookLenght + 104 + (4 * i));
             	i++;
             }
-        	for(int b = 46; b < 58; b++) {
-        		int i = 0;
-        		hooks[b] = hookSheet.getSubimage(initialHookX + (8 * i), initialHookY + 57 + 60 + (2 * i), hookWidth, hookLenght + 52 + 51 + (2 * i));
-        		i++;
-        	}
             
             timer = new Timer(100, e ->{
             	currentFrame = (currentFrame + 1) % frames.length;
@@ -117,6 +121,21 @@ public class GamePanel extends JPanel {
                 repaint();
             });
             movertimer.start();
+            
+            hookTimer = new Timer(60	, e -> {
+                if (hookInMotion) {
+                    if (currentHookFrame < hooks.length - 1) {
+                        currentHookFrame++;
+                    } 
+                    else {
+                        hookInMotion = false;
+                        shooting = false;
+                    }
+
+                    repaint();
+                }
+            });
+            hookTimer.start();
 
         } 
         catch (Exception e) {
@@ -134,8 +153,12 @@ public class GamePanel extends JPanel {
         BufferedImage spriteToDraw;
         if (shooting && shootingFrame != null) {
             spriteToDraw = shootingFrame;
-            for(int i = 0; i < hooks.length; i++) {
-            	g2d.drawImage(hooks[i], playerX + 15, 500 + 30, hookWidth * 2, hookLenght * 2, null);
+            if (hookInMotion) {
+                int drawY = hookY;
+                for (int i = 0; i <= currentHookFrame && i < hooks.length; i++) {
+                    g2d.drawImage(hooks[i], playerX + 47, drawY, hookWidth * 2, hookLenght * 2, null);
+                    drawY -= hookLenght * 2; 
+                }
             }
         } 
         else if ((movingLeft || movingRight) && frames != null && frames[currentFrame] != null) {
@@ -182,9 +205,15 @@ public class GamePanel extends JPanel {
 	        	 }
 	         }
 	         else if(key == KeyEvent.VK_SPACE) {
-	        	 shooting = true;
-	        	 movingLeft = false;
-	        	 movingRight = false;
+	        	 if (!shooting && !hookInMotion) {  
+	        		 shooting = true;
+	    	         movingLeft = false;
+	    	         movingRight = false;
+	
+	    	         hookY = 500 - 29;
+	    	         currentHookFrame = 0;
+	    	         hookInMotion = true;
+	        	 }
 	         }
 		}
 
