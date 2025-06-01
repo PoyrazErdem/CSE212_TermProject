@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -104,34 +105,38 @@ public class GamePanel extends JPanel {
             foregrounds[2] = foregroundSheet.getSubimage(399, 692, foregroundWidth, foregroundHeight);
             foregrounds[3] = foregroundSheet.getSubimage(8, 1123, foregroundWidth, foregroundHeight);
             
+            foregroundCollisionstheMethod();
+            
             timer = new Timer(100, e ->{ // how fast the char sprites come one after another
             	currentFrame = (currentFrame + 1) % frames.length;
             	repaint();
             });
             timer.start();
             
-            movertimer = new Timer(10, e -> { // how fast things move inside the game like char going right/left or projectile
+            movertimer = new Timer(14, e -> { // how fast things move inside the game like char going right/left or projectile
             	Rectangle predictionColision; //a temp Rectangle to represent where the player would be if they moved to left or right
             	
             	leftWall = new Rectangle(15, 0, 5, getHeight());
                 rightWall = new Rectangle(getWidth() - 20, 0, 5, getHeight());
             	
             	if(movingLeft) {
-            		predictionColision = new Rectangle(playerX - 5, 500, 96, 102);
+            		predictionColision = new Rectangle(playerX - 6, 500, 96, 102);
             		if (!predictionColision.intersects(leftWall)) {
                         playerX -= 5;
                     }
             	}
             	if(movingRight) {
-            		predictionColision = new Rectangle(playerX + 5, 500, 96, 102);
+            		predictionColision = new Rectangle(playerX - 5, 500, 96, 102);
                     if (!predictionColision.intersects(rightWall)) {
                         playerX += 5;
                     }
             	}
             	
             	if (currentProjectile != null && currentProjectile.active) {
-            	    currentProjectile.update();
-            	}else {
+            		currentProjectile.update(levelForegroundCollision.get(currentLevel));
+
+            	}
+            	else {
             		currentProjectile = null; // delete the projectile
             	}
             	
@@ -141,6 +146,10 @@ public class GamePanel extends JPanel {
             
             addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
+                	int x = e.getX();
+                    int y = e.getY();
+                    System.out.println("Mouse clicked at: (" + x + ", " + y + ")");
+                    
                 	if (waitingForStartClick) {
                         waitingForStartClick = false;
                         timerPanel.startCountdown();
@@ -196,7 +205,7 @@ public class GamePanel extends JPanel {
         }
         
         if (waitingForStartClick) {
-            g2d.setColor(new Color(0, 0, 0, 220)); //transparent layer
+            g2d.setColor(new Color(0, 0, 0, 150)); //transparent layer
             g2d.fillRect(0, 0, getWidth(), getHeight());
 
             g2d.setColor(Color.YELLOW);
@@ -224,7 +233,7 @@ public class GamePanel extends JPanel {
 			}
 			
 			else if (key == KeyEvent.VK_L) {
-			    nextLevel(); // 🔧 test level transition
+			    nextLevel(); 
 			}
 			
 	        if(key == KeyEvent.VK_A) {
@@ -308,5 +317,67 @@ public class GamePanel extends JPanel {
         delay.setRepeats(false); // run only once
         delay.start();
     }
+    private void foregroundCollisionstheMethod() {
+    	int level1Width = 95;
+    	int level1Lenght = 24;
+    	
+    	int level2HorizontalWidth = 189;
+    	int level2HorizontalLenght = 46;
+    	int level2VerticalWidth = 45;
+    	int level2VerticalLenght = 118;
+    	
+    	int level3UpperY = 277;
+    	int level3LowerY = 349;
+    	int level3Width = 21;
+    	int level3Lenght = 21;
+		ArrayList<Rectangle> level0 = new ArrayList<>();
+		levelForegroundCollision.add(level0);
+		 
+		
+		ArrayList<Rectangle> level1 = new ArrayList<>();
+		level1.addAll(Arrays.asList(
+			new Rectangle(216, 239, level1Width, level1Lenght), new Rectangle(528, 239, level1Width, level1Lenght),
+			new Rectangle(840, 239, level1Width, level1Lenght), new Rectangle(528, 394, level1Width, level1Lenght)
+		));
+		levelForegroundCollision.add(level1);
+		 
+		
+		ArrayList<Rectangle> level2 = new ArrayList<>();
+		level2.addAll(Arrays.asList(
+			new Rectangle(194, 287, level2HorizontalWidth, level2HorizontalLenght), new Rectangle(771, 287, level2HorizontalWidth, level2HorizontalLenght),
+			new Rectangle(555, 143, level2VerticalWidth, level2VerticalLenght), new Rectangle(555, 383, level2VerticalWidth, level2VerticalLenght)
+		));	
+		levelForegroundCollision.add(level2);
+		 
+		
+		ArrayList<Rectangle> level3 = new ArrayList<>();
+		level3.addAll(Arrays.asList(
+			 new Rectangle(95, level3LowerY, level3Width, level3Lenght), new Rectangle(168, level3UpperY, level3Width, level3Lenght),
+			 new Rectangle(240, level3LowerY, level3Width, level3Lenght), new Rectangle(312, level3UpperY, level3Width, level3Lenght),
+			 new Rectangle(384, level3LowerY, level3Width, level3Lenght), new Rectangle(456, level3UpperY, level3Width, level3Lenght),
+			 new Rectangle(528, level3LowerY, level3Width, level3Lenght), new Rectangle(600, level3UpperY, level3Width, level3Lenght),
+			 new Rectangle(672, level3LowerY, level3Width, level3Lenght), new Rectangle(745, level3UpperY, level3Width, level3Lenght),
+			 new Rectangle(816, level3LowerY, level3Width, level3Lenght), new Rectangle(888, level3UpperY, level3Width, level3Lenght),
+			 new Rectangle(960, level3LowerY, level3Width, level3Lenght), new Rectangle(1032, level3UpperY, level3Width, level3Lenght)
+		));
+		levelForegroundCollision.add(level3);
+    }
 } 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     

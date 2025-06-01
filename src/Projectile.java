@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 
 public class Projectile {
 	int x, y; //starting positions
@@ -13,8 +15,16 @@ public class Projectile {
         this.y = startY;
     }
 
-    public void update() {
-    	if (y - currentLength - 27 <= 0) { // hit the roof
+    public void update(ArrayList<Rectangle> foregroundBlocks) { // possible "collision-able" blocks
+    	Rectangle projectileCollision = new Rectangle(x, y - currentLength, 6, currentLength);
+
+        for (Rectangle block : foregroundBlocks) {
+            if (projectileCollision.intersects(block)) {
+                active = false;
+                return; 
+            }
+        }
+    	if (y - currentLength - 30 <= 0) { // hit the roof
     	    active = false; 
     	} 
     	else {
