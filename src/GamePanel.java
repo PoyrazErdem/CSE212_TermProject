@@ -1,19 +1,25 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GamePanel extends JPanel {
-    private BufferedImage[] frames; 
-    private BufferedImage spriteSheet;
+	
+    private BufferedImage[] frames;  //char frames
+    private BufferedImage spriteSheet; //the char sprites
     private int playerX = 100;
-    private int currentFrame = 0;
+    private int currentFrame = 0; //current char frame
     private int frameWidth = 32;
     private int frameHeight = 34;
     private int frameCount = 4; 
@@ -30,19 +36,11 @@ public class GamePanel extends JPanel {
     private BufferedImage shootingFrame;
     private boolean shooting = false;
     
-    private BufferedImage hookSheet;
-    private BufferedImage[] hooks = new BufferedImage[46];
-    private int initialHookX = 8;
-    private int initialHookY = 1383;
-    private int hookWidth = 9;
-    private int hookLenght = 1417 - 1383;
-    private int hookY = 500 - 29;
-    private int currentHookFrame = 0;
-    private boolean hookInMotion = false;
-    private Timer hookTimer;
+    private Projectile currentProjectile;
     
-    private Timer timer;
-    private Timer movertimer;
+    private Timer timer; //sprite animation
+    private Timer movertimer; //game animation
+    Time timerPanel = new Time(); //timer on the right bottom
     
     private BufferedImage backgroundSheet;
     private BufferedImage[] backgrounds = new BufferedImage[4];
@@ -53,17 +51,29 @@ public class GamePanel extends JPanel {
     private BufferedImage[] foregrounds = new BufferedImage[4];
     private int foregroundWidth = 392 - 8;
     private int foregroundHeight = 251 - 44;
+    
+    private Rectangle getPlayerBounds() {
+        return new Rectangle(playerX, 500, 96, 102); //to be able to track the player
+    }
+    private Rectangle leftWall;
+    private Rectangle rightWall;
+    private ArrayList<ArrayList<Rectangle>> levelForegroundCollision = new ArrayList<>();
+    
+    private int currentLevel = 0;
+    private final int totalLevels = 4;
+    private boolean levelTransitionActive = false;
+    private String levelCompleteMessage = "LEVEL COMPLETE";
+    private boolean waitingForStartClick = true;
 
     public GamePanel() {
         
-    	setFocusable(true);
+    	setFocusable(true); //allows key input
         requestFocusInWindow();
         addKeyListener(new keyHandler());
         setBackground(Color.BLACK);
-        setLayout(null); // Use absolute layout
-
-        Time timerPanel = new Time();
-        timerPanel.setBounds(1000, 640, 150, 40); // position and size on the GamePanel
+        setLayout(null); //absolute layout (safety reasons that I am not entirely know or sure of)
+        
+        timerPanel.setBounds(1046, 640, 150, 40);
         add(timerPanel);
 
         
@@ -71,7 +81,6 @@ public class GamePanel extends JPanel {
             spriteSheet = ImageIO.read(getClass().getResource("/assets/Player.png"));
             backgroundSheet = ImageIO.read(getClass().getResource("/assets/Backgrounds.png"));
             foregroundSheet = ImageIO.read(getClass().getResource("/assets/Foreground.png"));
-            hookSheet = ImageIO.read(getClass().getResource("/assets/Items__Weapons.png"));
 
             frames = new BufferedImage[frameCount];
             for(int i = 0; i < frameCount; i++) {
@@ -95,47 +104,50 @@ public class GamePanel extends JPanel {
             foregrounds[2] = foregroundSheet.getSubimage(399, 692, foregroundWidth, foregroundHeight);
             foregrounds[3] = foregroundSheet.getSubimage(8, 1123, foregroundWidth, foregroundHeight);
             
-            
-            for(int i = 0; i < 23; i++) {
-            	hooks[i] = hookSheet.getSubimage(initialHookX + (16 * i), initialHookY + (4 * i), hookWidth, hookLenght + (4 * i));
-            }
-            for(int a = 23; a < 46; a++) {
-            	int i = 0;
-            	hooks[a] = hookSheet.getSubimage(initialHookX + (16 * i), initialHookY + 114 + 68 + (4 * i), hookWidth, hookLenght + 104 + (4 * i));
-            	i++;
-            }
-            
-            timer = new Timer(100, e ->{
+            timer = new Timer(100, e ->{ // how fast the char sprites come one after another
             	currentFrame = (currentFrame + 1) % frames.length;
             	repaint();
             });
             timer.start();
             
-            movertimer = new Timer(10, e -> {
+            movertimer = new Timer(10, e -> { // how fast things move inside the game like char going right/left or projectile
+            	Rectangle predictionColision; //a temp Rectangle to represent where the player would be if they moved to left or right
+            	
+            	leftWall = new Rectangle(15, 0, 5, getHeight());
+                rightWall = new Rectangle(getWidth() - 20, 0, 5, getHeight());
+            	
             	if(movingLeft) {
-            		playerX -= 5;
+            		predictionColision = new Rectangle(playerX - 5, 500, 96, 102);
+            		if (!predictionColision.intersects(leftWall)) {
+                        playerX -= 5;
+                    }
             	}
             	if(movingRight) {
-            		playerX += 5;
+            		predictionColision = new Rectangle(playerX + 5, 500, 96, 102);
+                    if (!predictionColision.intersects(rightWall)) {
+                        playerX += 5;
+                    }
             	}
+            	
+            	if (currentProjectile != null && currentProjectile.active) {
+            	    currentProjectile.update();
+            	}else {
+            		currentProjectile = null; // delete the projectile
+            	}
+            	
                 repaint();
             });
             movertimer.start();
             
-            hookTimer = new Timer(60	, e -> {
-                if (hookInMotion) {
-                    if (currentHookFrame < hooks.length - 1) {
-                        currentHookFrame++;
-                    } 
-                    else {
-                        hookInMotion = false;
-                        shooting = false;
+            addMouseListener(new MouseAdapter() {
+                public void mousePressed(MouseEvent e) {
+                	if (waitingForStartClick) {
+                        waitingForStartClick = false;
+                        timerPanel.startCountdown();
+                        repaint();
                     }
-
-                    repaint();
                 }
             });
-            hookTimer.start();
 
         } 
         catch (Exception e) {
@@ -146,20 +158,17 @@ public class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(backgrounds[3], 0, 0, backgroundWidth * 3 , backgroundHeight * 3, null);
-        g2d.drawImage(foregrounds[3], 0, 0, foregroundWidth * 3 , foregroundHeight * 3, null);
+        Graphics2D g2d = (Graphics2D) g; //to be able to mirror the char to left
+        
+        g2d.drawImage(backgrounds[currentLevel], 0, 0, backgroundWidth * 3 , backgroundHeight * 3, null);
+        g2d.drawImage(foregrounds[currentLevel], 0, 0, foregroundWidth * 3 , foregroundHeight * 3, null);
         
         BufferedImage spriteToDraw;
-        if (shooting && shootingFrame != null) {
+        if (currentProjectile != null && currentProjectile.active) {
+            currentProjectile.draw(g2d);
+        }
+        if (shooting && shootingFrame != null) { //if not shooting then if you shoot the frame will be shooting frame
             spriteToDraw = shootingFrame;
-            if (hookInMotion) {
-                int drawY = hookY;
-                for (int i = 0; i <= currentHookFrame && i < hooks.length; i++) {
-                    g2d.drawImage(hooks[i], playerX + 47, drawY, hookWidth * 2, hookLenght * 2, null);
-                    drawY -= hookLenght * 2; 
-                }
-            }
         } 
         else if ((movingLeft || movingRight) && frames != null && frames[currentFrame] != null) {
             spriteToDraw = frames[currentFrame];
@@ -170,10 +179,31 @@ public class GamePanel extends JPanel {
 
         // Flip horizontally if facing left
         if (facingLeft) {
-            g2d.drawImage(spriteToDraw, playerX + 96, 500, -96, 102, null);
+            g2d.drawImage(spriteToDraw, playerX + 80, 516, -80, 85, null);
         } 
         else {
-            g2d.drawImage(spriteToDraw, playerX, 500, 96, 102, null);
+            g2d.drawImage(spriteToDraw, playerX, 516, 80, 85, null);
+        }
+        
+        if (levelTransitionActive) {
+            g2d.setColor(new Color(0, 0, 0, 150)); // dark overlay
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+
+            g2d.setColor(Color.WHITE);
+            g2d.setFont(new Font("Arial", Font.BOLD, 36));
+            int stringWidth = g2d.getFontMetrics().stringWidth(levelCompleteMessage); // gets the thickness to later use to center the text
+            g2d.drawString(levelCompleteMessage, (getWidth() - stringWidth) / 2, getHeight() / 2); // centering 
+        }
+        
+        if (waitingForStartClick) {
+            g2d.setColor(new Color(0, 0, 0, 220)); //transparent layer
+            g2d.fillRect(0, 0, getWidth(), getHeight());
+
+            g2d.setColor(Color.YELLOW);
+            g2d.setFont(new Font("Arial", Font.BOLD, 32));
+            String msg = "CLICK TO START";
+            int textWidth = g2d.getFontMetrics().stringWidth(msg);
+            g2d.drawString(msg, (getWidth() - textWidth) / 2, getHeight() / 2);
         }
     }
     
@@ -188,33 +218,42 @@ public class GamePanel extends JPanel {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			// TODO Auto-generated method stub
-			 int key = e.getKeyCode();
-	         
-	         if(key == KeyEvent.VK_A) {
-	        	 aKeyHeld = true;
-	        	 if(!shooting) {
-	        		 movingLeft = true;
-		        	 facingLeft = true;
-	        	 }
-	         }
-	         else if(key == KeyEvent.VK_D) {
-	        	 dKeyHeld = true;
-	        	 if(!shooting) {
-	        		 movingRight = true;
-		        	 facingLeft = false;
-	        	 }
-	         }
-	         else if(key == KeyEvent.VK_SPACE) {
-	        	 if (!shooting && !hookInMotion) {  
-	        		 shooting = true;
-	    	         movingLeft = false;
-	    	         movingRight = false;
-	
-	    	         hookY = 500 - 29;
-	    	         currentHookFrame = 0;
-	    	         hookInMotion = true;
-	        	 }
-	         }
+			int key = e.getKeyCode();
+			if (waitingForStartClick) {
+				return;
+			}
+			
+			else if (key == KeyEvent.VK_L) {
+			    nextLevel(); // 🔧 test level transition
+			}
+			
+	        if(key == KeyEvent.VK_A) {
+	        	aKeyHeld = true;
+	        	if(!shooting) {
+	        		movingLeft = true;
+		        	facingLeft = true;
+	        	}
+	        }
+	        else if(key == KeyEvent.VK_D) {
+	        	dKeyHeld = true;
+	        	if(!shooting) {
+	        		movingRight = true;
+		        	facingLeft = false;
+	        	}
+	        }
+	        else if(key == KeyEvent.VK_SPACE) {
+	        	if (!shooting) {  
+	        		shooting = true;
+	    	        movingLeft = false;
+	    	        movingRight = false;
+	    	         
+	    	        if (currentProjectile == null || !currentProjectile.active) {
+	    	            int projectileX = facingLeft ? playerX + 45 : playerX + 47; // if facing left true then projectileX = playerX + 20 else projectileX = playerX + 70
+	    	            int projectileY = 600; 
+	    	            currentProjectile = new Projectile(projectileX, projectileY);
+	    	        }
+	        	}
+	        }
 		}
 
 		@Override
@@ -241,6 +280,33 @@ public class GamePanel extends JPanel {
 		    	 }
 		    }
 		}
+    }
+    
+    public void goToLevel(int levelIndex) {
+        if (levelIndex >= 0 && levelIndex < totalLevels) {
+            currentLevel = levelIndex;
+            waitingForStartClick = true;
+            timerPanel.resetCountdown();
+            repaint();
+        }
+    }
+    
+    private void nextLevel() {
+        levelTransitionActive = true;
+        repaint();
+
+        Timer delay = new Timer(2000, e -> {
+            int nextLevelIndex = (currentLevel + 1) % totalLevels; //game loops
+            goToLevel(nextLevelIndex);
+            levelTransitionActive = false;
+            waitingForStartClick = true;
+            timerPanel.resetCountdown();
+            timerPanel.stopCountdown();
+            repaint();
+        });
+        
+        delay.setRepeats(false); // run only once
+        delay.start();
     }
 } 
     

@@ -9,7 +9,8 @@ import javax.swing.JMenuItem;
 public class GameScreen extends JFrame{
 	private	JMenuBar menubar;
 	private JMenu gameMenu, optionsMenu, difficultyMenu ,helpMenu;
-	private JMenuItem quitItem, historyItem, highScoreItem, noviceItem, intermediateItem, advencedItem, aboutItem;
+	private JMenuItem quitItem, historyItem, highScoreItem, begginerItem ,noviceItem, intermediateItem, advencedItem, aboutItem;
+	 GamePanel gamePanel = new GamePanel();
 	
 	public GameScreen() {
 		
@@ -23,9 +24,12 @@ public class GameScreen extends JFrame{
 		quitItem = new JMenuItem("Quit");
 		historyItem = new JMenuItem("History");
 		highScoreItem = new JMenuItem("High Score List");
+		
+		begginerItem = new JMenuItem("Begginer");
 		noviceItem = new JMenuItem("Novice");
 		intermediateItem = new JMenuItem("Intermediate");
 		advencedItem = new JMenuItem("Advenced");
+		
 		aboutItem = new JMenuItem("About");
         
 		gameMenu.add(quitItem);
@@ -34,6 +38,7 @@ public class GameScreen extends JFrame{
 		optionsMenu.add(highScoreItem);
 		optionsMenu.add(difficultyMenu);
 		
+		difficultyMenu.add(begginerItem);
 		difficultyMenu.add(noviceItem);
 		difficultyMenu.add(intermediateItem);
 		difficultyMenu.add(advencedItem);
@@ -51,12 +56,12 @@ public class GameScreen extends JFrame{
         quitItem.addActionListener(handler);
         historyItem.addActionListener(handler);
         highScoreItem.addActionListener(handler);
+        begginerItem.addActionListener(handler);
         noviceItem.addActionListener(handler);
         intermediateItem.addActionListener(handler);
         advencedItem.addActionListener(handler);
         aboutItem.addActionListener(handler);
         
-        GamePanel gamePanel = new GamePanel();
         add(gamePanel);
         
         setTitle("PANG");
@@ -71,7 +76,7 @@ public class GameScreen extends JFrame{
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
 	    	String type = e.getActionCommand();
-	    	
+
 	    	switch(type) {
 	    		case "Quit":
 	    			System.exit(0);
@@ -86,13 +91,20 @@ public class GameScreen extends JFrame{
 	    			test.highScore2();
 	    			break;
 	    			
+	    		case "Begginer":
+	    			gamePanel.goToLevel(0);
+	    			break;
+	    			
 	    		case "Novice":
+	    			gamePanel.goToLevel(1);
 	    			break;
 	    			
 	    		case "Intermediate":
+	    			gamePanel.goToLevel(2);
 	    			break;
 	    			
 	    		case "Advenced":
+	    			gamePanel.goToLevel(3);
 	    			break;
 	    		
 	    		case "About":

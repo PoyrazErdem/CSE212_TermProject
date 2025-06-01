@@ -6,11 +6,11 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Time extends JPanel {
-	private int timeleft = 90;
+	private int timeleft = 100;
 	private Timer timer;
 	
 	public Time() {
-        setOpaque(false); //nobackground
+        setOpaque(false); //no background
         setFocusable(false);
         
         
@@ -21,8 +21,19 @@ public class Time extends JPanel {
 				timer.stop();
 			}
 		});
-		timer.start();
 	}
+	public void startCountdown() {
+        if (!timer.isRunning()) {
+            timer.start();
+        }
+    }
+	public void stopCountdown() {
+        timer.stop();
+    }
+	public void resetCountdown() {
+        timeleft = 100;
+        repaint();
+    }
 	
 	@Override
 	protected void paintComponent(Graphics g) {
