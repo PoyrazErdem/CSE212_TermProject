@@ -1,18 +1,22 @@
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 public class GameScreen extends JFrame{
 	private	JMenuBar menubar;
 	private JMenu gameMenu, optionsMenu, difficultyMenu ,helpMenu;
-	private JMenuItem quitItem, historyItem, highScoreItem, begginerItem ,noviceItem, intermediateItem, advencedItem, aboutItem;
-	 GamePanel gamePanel = new GamePanel();
+	private JMenuItem quitItem, historyItem, highScoreItem, beginnerItem ,noviceItem, intermediateItem, advencedItem, aboutItem;
+	public GamePanel gamePanel;
 	
-	public GameScreen() {
+	public GameScreen(String username) {
 		
 		menubar = new JMenuBar();
 		
@@ -25,7 +29,7 @@ public class GameScreen extends JFrame{
 		historyItem = new JMenuItem("History");
 		highScoreItem = new JMenuItem("High Score List");
 		
-		begginerItem = new JMenuItem("Begginer");
+		beginnerItem = new JMenuItem("Beginner");
 		noviceItem = new JMenuItem("Novice");
 		intermediateItem = new JMenuItem("Intermediate");
 		advencedItem = new JMenuItem("Advenced");
@@ -38,7 +42,7 @@ public class GameScreen extends JFrame{
 		optionsMenu.add(highScoreItem);
 		optionsMenu.add(difficultyMenu);
 		
-		difficultyMenu.add(begginerItem);
+		difficultyMenu.add(beginnerItem);
 		difficultyMenu.add(noviceItem);
 		difficultyMenu.add(intermediateItem);
 		difficultyMenu.add(advencedItem);
@@ -56,12 +60,13 @@ public class GameScreen extends JFrame{
         quitItem.addActionListener(handler);
         historyItem.addActionListener(handler);
         highScoreItem.addActionListener(handler);
-        begginerItem.addActionListener(handler);
+        beginnerItem.addActionListener(handler);
         noviceItem.addActionListener(handler);
         intermediateItem.addActionListener(handler);
         advencedItem.addActionListener(handler);
         aboutItem.addActionListener(handler);
         
+        gamePanel = new GamePanel(username);
         add(gamePanel);
         
         setTitle("PANG");
@@ -69,7 +74,6 @@ public class GameScreen extends JFrame{
         setLocationRelativeTo(null);	
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setVisible(true);
-        
 	}
 	
 	private class MenuActionHandler implements ActionListener {
@@ -83,6 +87,17 @@ public class GameScreen extends JFrame{
 	    			break;
 	    			
 	    		case "History":
+	    			try {
+	    		        File logFile = new File("scorelog.txt");
+	    		        if (!logFile.exists()) {
+	    		            JOptionPane.showMessageDialog(GameScreen.this, "No log file found.");
+	    		            break;
+	    		        }
+	    		        Desktop.getDesktop().open(logFile);
+	    		    } catch (IOException ex) {
+	    		        ex.printStackTrace();
+	    		        JOptionPane.showMessageDialog(GameScreen.this, "Failed to open log file.");
+	    		    }
 	    			break;
 	    			
 	    		case "High Score List":
@@ -91,7 +106,7 @@ public class GameScreen extends JFrame{
 	    			test.highScore2();
 	    			break;
 	    			
-	    		case "Begginer":
+	    		case "Beginner":
 	    			gamePanel.goToLevel(0);
 	    			break;
 	    			
@@ -115,12 +130,4 @@ public class GameScreen extends JFrame{
 	    }
 	}
 }	
-
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
+    

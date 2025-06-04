@@ -45,4 +45,8 @@ public class Projectile {
         g2d.setStroke(new java.awt.BasicStroke(2));
         g2d.drawLine(x + 2, y, x + 2, y - currentLength);
     }
+    
+    public Rectangle getBounds() {
+        return new Rectangle(x, y - currentLength, 6, currentLength);
+    }
 }

@@ -5,7 +5,7 @@ public class ProjectMain {
 		for(User user : User.users) {
 			System.out.println(user.getUserName());
 		}
-        /*
+        
         MainMenuScreen mainMenuScreen = new MainMenuScreen();
         mainMenuScreen.setTitle("WELCOME");
         mainMenuScreen.setDefaultCloseOperation(3);
@@ -13,9 +13,9 @@ public class ProjectMain {
         mainMenuScreen.setResizable(false);
         mainMenuScreen.setLocationRelativeTo(null);
         mainMenuScreen.setVisible(true);
-        */
+        
 		
-		new GameScreen();
+		//new GameScreen(null);
 	}
 
 }

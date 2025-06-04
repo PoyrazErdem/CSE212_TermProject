@@ -22,7 +22,7 @@ public class UserInterface extends JFrame {
 	private JPanel buttonPanel;
 	private JPanel errorPanel;
 	
-	private static JTextField usernameTxtField;
+	public static JTextField usernameTxtField;
 	private static JPasswordField passwordTxtField;
 	private JLabel usernameTxtLabel;
 	private JLabel passwordTxtLabel;
@@ -47,7 +47,6 @@ public class UserInterface extends JFrame {
 		usernameTxtField.setToolTipText("enter your username here");
 		usernamePanel.add(usernameTxtLabel);
 		usernamePanel.add(usernameTxtField);
-		
 		
 		passwordPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		passwordTxtLabel = new JLabel("Password: ");
@@ -161,7 +160,8 @@ public class UserInterface extends JFrame {
 					user.passwordValidator();
 					UserManegment.Login(username, password);
 					dispose();
-				}else {
+				}
+				else {
 					// do nothing
 				}
 			}
@@ -187,12 +187,16 @@ public class UserInterface extends JFrame {
 			}
 			else if(checkpass) {
 				dispose();
-				new GameScreen();
+				String usernameOnly = getUsername();
+				new GameScreen(usernameOnly);
 			}
 		}	
 	}
+	
+	public static String getUsername() {
+	    return usernameTxtField.getText().trim();
+	}
 }
-
 
 
 
