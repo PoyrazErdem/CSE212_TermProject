@@ -8,6 +8,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -130,10 +130,17 @@ public class GamePanel extends JPanel {
 	private int scoreBeforeLevel = 0;      // saved score before entering a level
 	private int currentLevelScore = 0;     // temporary score gained in current level
 	private int[] levelTimes = new int[totalLevels]; 
+	
+	private MusicandSound bgm = new MusicandSound();;
+	private boolean paused = false;
 
     public GamePanel(String username) {
     	
     	this.username = username;
+    	
+    	if (bgm != null) {
+    	    bgm.playMusic("/assets/tetoTenebre_Rosso.wav", true);
+    	}
         
     	setFocusable(true); //allows key input
         requestFocusInWindow();
@@ -308,21 +315,20 @@ public class GamePanel extends JPanel {
             
             addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
-                	int x = e.getX();
+                    int x = e.getX();
                     int y = e.getY();
                     System.out.println("Mouse clicked at: (" + x + ", " + y + ")");
-                    
-                	if (waitingForStartClick) {
+
+                    if (waitingForStartClick) {
                         waitingForStartClick = false;
                         timerPanel.startCountdown();
+
+                        if (paused && bgm != null) {
+                            bgm.resumeMusic(); 
+                            paused = false;
+                        }
                         repaint();
                     }
-                	
-                	if (waitingForStartClick) {
-                	    waitingForStartClick = false;
-                	    timerPanel.startCountdown(); 
-                	    repaint();
-                	}
                 }
             });
         } 
@@ -490,10 +496,15 @@ public class GamePanel extends JPanel {
 	        	}
 	        }
 	        
-	        else if (key == KeyEvent.VK_P) { //pause
+	        else if (key == KeyEvent.VK_P) { // pause
 	            if (!waitingForStartClick) {
 	                waitingForStartClick = true;
-	                timerPanel.stopCountdown(); 
+	                timerPanel.stopCountdown();
+	                
+	                if (bgm != null) {
+	                    bgm.stopMusic();  // stop music on pause
+	                    paused = true;
+	                }
 	                repaint();
 	            }
 	        }
@@ -754,5 +765,13 @@ public class GamePanel extends JPanel {
             if (b.active) return false;
         }
         return true;
+    }
+    
+    @Override
+    public void removeNotify() {
+        super.removeNotify();
+        if (bgm != null) {
+            bgm.stopMusic();
+        }
     }
 }

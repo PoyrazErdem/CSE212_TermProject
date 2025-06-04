@@ -1,0 +1,8 @@
+username: poy, total points: 2690, level 1 finish time: 89
+username: poy, total points: 2700, level 1 finish time: 90
+username: poy, total points: 2710, level 1 finish time: 91
+username: poy, total points: 2710, level 1 finish time: 91
+username: poy, total points: 960, level 1 finish time: 96
+username: poy, total points: 2300, level 1 finish time: 96, level 2 finish time: 94
+username: poy, total points: 2710, level 1 finish time: 91
+username: poy, total points: 2710, level 1 finish time: 91

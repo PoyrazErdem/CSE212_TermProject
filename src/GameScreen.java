@@ -1,6 +1,8 @@
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -69,10 +71,19 @@ public class GameScreen extends JFrame{
         gamePanel = new GamePanel(username);
         add(gamePanel);
         
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                if (gamePanel != null) {
+                    gamePanel.removeNotify();  // This will call your existing stopMusic logic
+                }
+            }
+        });
+        
         setTitle("PANG");
         setSize(GamePanel.backgroundWidth * 3, 840);
         setLocationRelativeTo(null);	
-        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
 	}
 	
